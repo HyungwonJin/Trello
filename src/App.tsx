@@ -24,7 +24,7 @@ const Boards = styled.div`
 function App() {
   const [toDos, setToDos] = useRecoilState(toDoState);
   const onDragEnd = (info: DropResult) => {
-    const { destination, draggableId, source } = info;
+    const { destination, source } = info;
     if (!destination) return;
     if (destination?.droppableId === source.droppableId) {
       // 같은 board 속에서 옮길 때
@@ -32,8 +32,9 @@ function App() {
         // 옮긴 보드의 요소들을 copy
         const boardCopy = [...allBoards[source.droppableId]];
         // 순서를 바꿔주는 과정
+        const taskObj = boardCopy[source.index];
         boardCopy.splice(source.index, 1);
-        boardCopy.splice(destination?.index, 0, draggableId);
+        boardCopy.splice(destination?.index, 0, taskObj);
         // 원래 가지고 있던 객체의 내용 중에서 변화한 droppableId의 배열만 바꿔줌
         return {
           ...allBoards,
@@ -45,9 +46,10 @@ function App() {
       // 다른 보드로 옮길 때
       setToDos((allboards) => {
         const sourceBoard = [...allboards[source.droppableId]];
+        const taskObj = sourceBoard[source.index];
         const destinationBoard = [...allboards[destination.droppableId]];
         sourceBoard.splice(source.index, 1);
-        destinationBoard.splice(destination.index, 0, draggableId);
+        destinationBoard.splice(destination.index, 0, taskObj);
         return {
           ...allboards,
           [source.droppableId]: sourceBoard,
